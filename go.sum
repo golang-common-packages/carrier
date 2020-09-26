@@ -1,0 +1,4 @@
+github.com/golang-common-packages/hash v0.0.0-20200119064113-a0081e2a6db8 h1:a3D+arRmAFW464Dg9C04Uao3spkYEV4swFiaDHVrDPI=
+github.com/golang-common-packages/hash v0.0.0-20200119064113-a0081e2a6db8/go.mod h1:0JvieMtxIZO0VrJtgloaaHfNBQ2YsnSLppu//qkPsPM=
+github.com/gorilla/websocket v1.4.2 h1:+/TMaTYc4QFitKJxsQ7Yye35DkWvkdLcvGKqM+x0Ufc=
+github.com/gorilla/websocket v1.4.2/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
