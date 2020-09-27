@@ -1,7 +1,6 @@
 package carrier
 
 import (
-	"errors"
 	"log"
 	"math/rand"
 	"net/url"
