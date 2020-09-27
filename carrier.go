@@ -5,6 +5,8 @@ const (
 	WEBSOCKET = iota
 	// MQTT services
 	MQTT
+	// MAIL services
+	MAIL
 )
 
 // New carrier based on types
@@ -14,6 +16,8 @@ func New(carrierType int) func(carrierCompany int, config *Config) interface{} {
 		return NewWebsocket
 	case MQTT:
 		return NewMQTT
+	case MAIL:
+		return NewMail
 	default:
 		return nil
 	}

@@ -17,7 +17,7 @@ func NewWebsocket(carrierCompany int, config *Config) interface{} {
 
 	switch carrierCompany {
 	case GORILLA:
-		return NewGorillaClient(&config.Websocket)
+		return NewGorillaClient(&config.Gorilla)
 	}
 
 	return nil

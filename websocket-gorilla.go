@@ -14,7 +14,7 @@ import (
 // GorillaClient manage all websocket client actions
 type GorillaClient struct {
 	connection *websocket.Conn
-	config     *WebsocketConnectionModel
+	config     *GorillaConfigModel
 }
 
 var (
@@ -26,7 +26,7 @@ var (
 )
 
 // NewGorillaClient init new instance
-func NewGorillaClient(config *WebsocketConnectionModel) IWebsocket {
+func NewGorillaClient(config *GorillaConfigModel) IWebsocket {
 	configHashed := hashObject(config)
 
 	currentGorrilaClientSession := gorrilaClientSessionMapping[configHashed]

@@ -9,7 +9,7 @@ import (
 // EclipseClient manage all MQTT client actions
 type EclipseClient struct {
 	client mqtt.Client
-	config *MQTTConnectionModel
+	config *EclipseConfigModel
 }
 
 var (
@@ -18,7 +18,7 @@ var (
 )
 
 // NewEclipseClient init new instance
-func NewEclipseClient(config *MQTTConnectionModel) IMQTT {
+func NewEclipseClient(config *EclipseConfigModel) IMQTT {
 	configHashed := hashObject(config)
 
 	currentEclipseClientSession := EclipseClientSessionMapping[configHashed]

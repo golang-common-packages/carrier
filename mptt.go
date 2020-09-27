@@ -20,7 +20,7 @@ func NewMQTT(carrierCompany int, config *Config) interface{} {
 
 	switch carrierCompany {
 	case ECLIPSE:
-		return NewEclipseClient(&config.MQTT)
+		return NewEclipseClient(&config.Eclipse)
 	}
 
 	return nil
