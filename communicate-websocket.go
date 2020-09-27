@@ -24,9 +24,6 @@ var (
 
 	// websocketClientMutex mutex for this service only
 	websocketClientMutex sync.Mutex
-
-	// errWebsocketNotConnected is returned when the application read/writes a message and the connection is closed
-	errWebsocketNotConnected = errors.New("Websocket client: not connected")
 )
 
 // NewWebsocketClient init new instance
@@ -96,10 +93,7 @@ func (wc *WebsocketClient) reConnect() {
 
 // Write message to channel
 func (wc *WebsocketClient) Write(message string) error {
-	err := errWebsocketNotConnected
-
-	err = wc.connection.WriteMessage(websocket.TextMessage, []byte(message))
-	if err != nil {
+	if err := wc.connection.WriteMessage(websocket.TextMessage, []byte(message)); err != nil {
 		wc.closeAndReConect()
 		return err
 	}
@@ -109,10 +103,7 @@ func (wc *WebsocketClient) Write(message string) error {
 
 // Read message from channel
 func (wc *WebsocketClient) Read() (interface{}, error) {
-	err := errWebsocketNotConnected
-	message := []byte{}
-
-	_, message, err = wc.connection.ReadMessage()
+	_, message, err := wc.connection.ReadMessage()
 	if err != nil {
 		wc.closeAndReConect()
 		return nil, err
