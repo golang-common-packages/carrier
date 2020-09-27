@@ -1,15 +1,19 @@
 package carrier
 
 const (
-	// COMMUNICATE services
-	COMMUNICATE = iota
+	// WEBSOCKET services
+	WEBSOCKET = iota
+	// MQTT services
+	MQTT
 )
 
-// New database by abstract factory pattern
+// New carrier based on types
 func New(carrierType int) func(carrierCompany int, config *Config) interface{} {
 	switch carrierType {
-	case COMMUNICATE:
-		return NewCommunication
+	case WEBSOCKET:
+		return NewWebsocket
+	case MQTT:
+		return NewMQTT
 	default:
 		return nil
 	}
