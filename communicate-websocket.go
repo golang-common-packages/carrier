@@ -1,6 +1,7 @@
 package carrier
 
 import (
+	"errors"
 	"log"
 	"math/rand"
 	"net/url"
@@ -13,17 +14,19 @@ import (
 
 // WebsocketClient manage all websocket client actions
 type WebsocketClient struct {
-	connection       *websocket.Conn
-	connectionStatus bool
-	config           *Websocket
+	connection *websocket.Conn
+	config     *Websocket
 }
 
 var (
 	// websocketClientSessionMapping singleton pattern
 	websocketClientSessionMapping = make(map[string]*WebsocketClient)
 
-	// WebsocketClientMutex mutex for this service only
-	WebsocketClientMutex sync.Mutex
+	// websocketClientMutex mutex for this service only
+	websocketClientMutex sync.Mutex
+
+	// errWebsocketNotConnected is returned when the application read/writes a message and the connection is closed
+	errWebsocketNotConnected = errors.New("Websocket client: not connected")
 )
 
 // NewWebsocketClient init new instance
@@ -32,7 +35,7 @@ func NewWebsocketClient(config *Websocket) ICOMMUNICATE {
 
 	currentWebsocketClientSession := websocketClientSessionMapping[configHashed]
 	if currentWebsocketClientSession == nil {
-		currentWebsocketClientSession = &WebsocketClient{nil, false, nil}
+		currentWebsocketClientSession = &WebsocketClient{nil, nil}
 
 		url := url.URL{Scheme: config.Scheme, Host: config.URL, Path: config.Channel}
 		connection, _, err := websocket.DefaultDialer.Dial(url.String(), nil)
@@ -40,10 +43,9 @@ func NewWebsocketClient(config *Websocket) ICOMMUNICATE {
 			currentWebsocketClientSession.closeAndReConect()
 		} else {
 			currentWebsocketClientSession.connection = connection
-			currentWebsocketClientSession.connectionStatus = true
 			currentWebsocketClientSession.config = config
 			websocketClientSessionMapping[configHashed] = currentWebsocketClientSession
-			log.Println("Connected to Websocket server")
+			log.Println("Websocket client: connected")
 		}
 	}
 
@@ -74,18 +76,17 @@ func (wc *WebsocketClient) reConnect() {
 		url := url.URL{Scheme: wc.config.Scheme, Host: wc.config.URL, Path: wc.config.Channel}
 		newConnection, _, err := websocket.DefaultDialer.Dial(url.String(), nil)
 		if err != nil {
-			log.Printf("Dial: will try again in %v seconds. Because of %v\n", nextInterval, err)
+			log.Printf("Websocket client: will try again in %v seconds. Because of %v\n", nextInterval, err)
 		} else {
 			configHashed := hashObject(wc.config)
 
-			WebsocketClientMutex.Lock()
+			websocketClientMutex.Lock()
 			currentWebsocketClientSession := websocketClientSessionMapping[configHashed]
 			currentWebsocketClientSession.connection = newConnection
-			currentWebsocketClientSession.connectionStatus = err == nil
 			websocketClientSessionMapping[configHashed] = currentWebsocketClientSession
-			WebsocketClientMutex.Unlock()
+			websocketClientMutex.Unlock()
 
-			log.Println("Successfully reconnected to Websocket server")
+			log.Println("Websocket client: reconnected")
 			break
 		}
 
@@ -95,21 +96,29 @@ func (wc *WebsocketClient) reConnect() {
 
 // Write message to channel
 func (wc *WebsocketClient) Write(message string) error {
-	return wc.connection.WriteMessage(websocket.TextMessage, []byte(message))
+	err := errWebsocketNotConnected
+
+	err = wc.connection.WriteMessage(websocket.TextMessage, []byte(message))
+	if err != nil {
+		wc.closeAndReConect()
+		return err
+	}
+
+	return nil
 }
 
 // Read message from channel
 func (wc *WebsocketClient) Read() (interface{}, error) {
-	_, message, err := wc.connection.ReadMessage()
-	return message, err
-}
+	err := errWebsocketNotConnected
+	message := []byte{}
 
-// IsConnected returns the WebSocket connection status
-func (wc *WebsocketClient) IsConnected() bool {
-	WebsocketClientMutex.Lock()
-	defer WebsocketClientMutex.Unlock()
+	_, message, err = wc.connection.ReadMessage()
+	if err != nil {
+		wc.closeAndReConect()
+		return nil, err
+	}
 
-	return wc.connectionStatus
+	return bytesToString(message), nil
 }
 
 // End this communication

@@ -36,3 +36,7 @@ func hashObject(object interface{}) string {
 	}
 	return hasher.SHA1(string(configAsJSON))
 }
+
+func bytesToString(data []byte) string {
+	return string(data[:])
+}
