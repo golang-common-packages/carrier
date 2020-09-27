@@ -2,3 +2,5 @@ github.com/golang-common-packages/hash v0.0.0-20200119064113-a0081e2a6db8 h1:a3D
 github.com/golang-common-packages/hash v0.0.0-20200119064113-a0081e2a6db8/go.mod h1:0JvieMtxIZO0VrJtgloaaHfNBQ2YsnSLppu//qkPsPM=
 github.com/gorilla/websocket v1.4.2 h1:+/TMaTYc4QFitKJxsQ7Yye35DkWvkdLcvGKqM+x0Ufc=
 github.com/gorilla/websocket v1.4.2/go.mod h1:YR8l580nyteQvAITg2hZ9XVh4b55+EU/adAjf1fMHhE=
+github.com/jpillora/backoff v1.0.0 h1:uvFg412JmmHBHw7iwprIxkPMI+sGQ4kzOWsMeHnm2EA=
+github.com/jpillora/backoff v1.0.0/go.mod h1:J/6gKK9jxlEcS3zixgDgUAsiuZ7yrSoa/FX5e0EB2j4=

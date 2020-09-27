@@ -4,6 +4,7 @@ package carrier
 type ICOMMUNICATE interface {
 	Write(message string) error
 	Read() (interface{}, error)
+	IsConnected() bool
 	End() error
 }
 
